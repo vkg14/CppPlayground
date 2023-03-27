@@ -4,6 +4,8 @@
 template<typename T>
 void print_ptr_status(T&& o) {
     std::cout << "Count: " << o.use_count() << " Value: " << *o << std::endl;
+    auto fwd = std::forward<T>(o);
+    std::cout << "Count: " << fwd.use_count() << " Value: " << *fwd << std::endl;
 }
 
 int main() {
