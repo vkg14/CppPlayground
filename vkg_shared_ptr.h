@@ -13,8 +13,8 @@ template<typename T>
 class vkg_shared_ptr
 {
 private:
-    T* m_ptr = nullptr;
-    uint64_t* m_counter = nullptr;
+    T* m_ptr{ nullptr };
+    uint64_t* m_counter{ nullptr };
 
     void init_helper(T* o_ptr, uint64_t* o_counter = nullptr) {
         m_ptr = o_ptr;
