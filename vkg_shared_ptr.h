@@ -28,11 +28,14 @@ private:
 
     void delete_helper() {
         if (m_ptr) {
+            std::cout << "Decrementing value from " << *m_counter << " to " << *m_counter - 1 << std::endl;
             *m_counter -= 1;
             if (*m_counter == 0) {
                 delete m_ptr;
                 delete m_counter;
             }
+        } else {
+            std::cout << "Deleting an empty object - noop." << std::endl;
         }
     }
 
