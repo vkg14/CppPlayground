@@ -55,7 +55,8 @@ public:
         init_helper(vkgSharedPtr.m_ptr, vkgSharedPtr.m_counter);
     }
 
-    // Move constructor
+    // Move constructor with simple initializer list.
+    // std::exchange replaces the reference passed with second argument and returns old value.
     vkg_shared_ptr(vkg_shared_ptr&& o)
             : m_ptr{ std::exchange(o.m_ptr, nullptr) },
               m_counter{ std::exchange(o.m_counter, nullptr) } {
@@ -77,10 +78,10 @@ public:
 
     // Move assignment
     vkg_shared_ptr& operator=(vkg_shared_ptr&& o) {
+        std::cout << "Called move assignment." << std::endl;
         delete_helper();
         m_ptr = std::exchange(o.m_ptr, nullptr);
         m_counter = std::exchange(o.m_counter, nullptr);
-        std::cout << "Called move assignment." << std::endl;
         return *this;
     }
 
