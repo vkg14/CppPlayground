@@ -64,6 +64,6 @@ int main() {
     auto ms_int = duration_cast<milliseconds>(t2 - t1);
     /* Getting number of milliseconds as a double. */
     duration<double, std::milli> ms_double = t2 - t1;
-    std::cout << "Took " << ms_int.count() << "ms to run all tests." << std::endl;
-    std::cout << "Took " << ms_int.count() / n_gen << "ms roughly to run each generated." << std::endl;
+    std::cout << "Took " << ms_int.count() << " ms to run all tests." << std::endl;
+    std::cout << "Took " << ms_int.count() / n_gen << " ms roughly to run each generated." << std::endl;
 }

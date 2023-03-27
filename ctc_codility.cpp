@@ -37,8 +37,8 @@ int solution_packets(int_vector &A, int Y) {
      * - lower = max_element - 1 (since this will never work)
      * - upper = sum of all values (since this is the minimum size for 1 ms time limit)
      */
-    if (Y < 1) {
-        // If we can't send any packets, the task is impossible.
+    if (Y < 1 || A.size() < 1) {
+        // If we can't send any packets or there are no messages to send, the task is impossible.
         return -1;
     }
     auto lower = *max_element(A.begin(), A.end()) - 1;
