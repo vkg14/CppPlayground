@@ -96,6 +96,7 @@ public:
 
     void reset(T* ptr) {
         delete_helper();
+        // Uses move assignment after constructing
         *this = vkg_shared_ptr(ptr);
     }
 

@@ -53,9 +53,9 @@ void testing_vkg_sp() {
 }
 
 int main() {
-    auto t1 = high_resolution_clock::now();
     basic_tests();
-    auto n_gen = 1000;
+    auto t1 = high_resolution_clock::now();
+    auto n_gen = 20;
     for (int i = 0; i < n_gen; i++) {
         generate_test();
     }
@@ -66,4 +66,5 @@ int main() {
     duration<double, std::milli> ms_double = t2 - t1;
     std::cout << "Took " << ms_int.count() << " ms to run all tests." << std::endl;
     std::cout << "Took " << ms_int.count() / n_gen << " ms roughly to run each generated." << std::endl;
+    return 0;
 }

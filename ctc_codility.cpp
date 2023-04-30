@@ -41,6 +41,10 @@ int solution_packets(int_vector &A, int Y) {
         // If we can't send any packets or there are no messages to send, the task is impossible.
         return -1;
     }
+    if (Y >= A.size()) {
+        // If we have more ms than messages, the min buffer size required is the max element.
+        return *std::max_element(A.begin(), A.end());
+    }
     auto lower = *max_element(A.begin(), A.end()) - 1;
     auto upper = std::reduce(A.begin(), A.end());
     while (lower < upper - 1) {
@@ -63,6 +67,25 @@ void basic_tests() {
     vec = { 2, 9, 1};
     sol = solution_packets(vec, y);
     assert(sol == 10);
+
+    vec = { 2, 8, 1, 1, 9, 3 };
+    sol = solution_packets(vec, y);
+    assert(sol == 12);
+
+    vec = { 1, 1, 1, 2, 2 };
+    y = 3;
+    sol = solution_packets(vec, y);
+    assert(sol == 3);
+
+
+    vec = { 8, 5, 5 };
+    y = 2;
+    sol = solution_packets(vec, y);
+    assert(sol == 10);
+
+    vec = {};
+    y = 3;
+    assert(solution_packets(vec, y) == -1);
 
     auto max_sum = 5 * std::pow(10, 4) * 500;
     std::cout << "MAX POSSIBLE: " << max_sum << " vs MAX ALLOWED: " << std::numeric_limits<int>::max() << std::endl;
