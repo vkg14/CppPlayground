@@ -13,16 +13,8 @@
 #include <iostream>
 
 /**
- * Implement a custom Vector class providing a subset of the functionality of
+ * Implementation of a custom Vector class providing a subset of the functionality of
  * the standard library vector.
- *
- * Solutions will be evaluated on the following criteria:
- * - Correctness
- * - Readability
- * - Generality
- * - Performance
- *
- * You may use the allocator, but it is not required
  */
 template<typename ElementT, typename AllocatorT = std::allocator<ElementT>>
 class Vector

@@ -1,8 +1,10 @@
 #include "ctc_codility.h"
+#include "thread_pool.h"
 #include "vkg_shared_ptr.h"
 #include <iostream>
 #include <numeric>
-#include <unordered_set>
+#include <random>
+#include <unordered_map>
 #include <vector>
 
 using int_vector = std::vector<int>;
@@ -17,22 +19,6 @@ void print_ptr_status(T&& o) {
     std::cout << "Count: " << o.use_count() << " Value: " << *o << std::endl;
     auto fwd = std::forward<T>(o);
     std::cout << "Count: " << fwd.use_count() << " Value: " << *fwd << std::endl;
-}
-
-int solution(int_vector &A) {
-    // Implement your solution here
-    std::unordered_set<int> m;
-    for (const auto &elt : A) {
-        if (elt > 0) {
-            m.emplace(elt);
-        }
-    }
-
-    int res = 1;
-    while (m.find(res) != m.end()) {
-        res += 1;
-    }
-    return res;
 }
 
 void testing_vkg_sp() {
@@ -52,7 +38,7 @@ void testing_vkg_sp() {
     // Destructors for vkg_sp (final reference) and vkg_sp2 (no-op) called.
 }
 
-int main() {
+void ctc_codility_perf() {
     basic_tests();
     auto t1 = high_resolution_clock::now();
     auto n_gen = 20;
@@ -66,5 +52,45 @@ int main() {
     duration<double, std::milli> ms_double = t2 - t1;
     std::cout << "Took " << ms_int.count() << " ms to run all tests." << std::endl;
     std::cout << "Took " << ms_int.count() / n_gen << " ms roughly to run each generated." << std::endl;
-    return 0;
+}
+
+void run_thread_pool(size_t threads) {
+    ThreadPool tp{threads};
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(100, 300);
+    for (int i = 0; i < 30; i++) {
+        auto fn = [i, &gen, &dis]() {
+            int random_num = dis(gen);
+            std::this_thread::sleep_for(std::chrono::milliseconds(random_num));
+            std::cout << "Job " << i << " completed in thread: " << std::this_thread::get_id() << std::endl;
+        };
+        tp.add_job(fn);
+    }
+    // Wait for all jobs to finish
+    tp.wait();
+}
+
+void test_thread_pool() {
+    size_t n = std::thread::hardware_concurrency();
+    std::cout << n << " concurrent threads are supported.\n";
+    std::vector<size_t> pool_sizes{1, n/2, n};
+    std::unordered_map<size_t, int> ms_consumed_per_pool_size;
+    for (auto pool_size : pool_sizes) {
+        auto t1 = high_resolution_clock::now();
+        run_thread_pool(pool_size);
+        auto t2 = high_resolution_clock::now();
+        auto ms_int = duration_cast<milliseconds>(t2 - t1);
+        ms_consumed_per_pool_size.emplace(pool_size, ms_int.count());
+    }
+    for (auto it = ms_consumed_per_pool_size.begin(); it != ms_consumed_per_pool_size.end(); ++it) {
+        std::cout << "Took " << it->second << " ms to perform 30 100-ms tasks with " << it->first << " threads." << std::endl;
+
+    }
+}
+
+int main() {
+    // testing_vkg_sp();
+    // ctc_codility_perf();
+    test_thread_pool();
 }
