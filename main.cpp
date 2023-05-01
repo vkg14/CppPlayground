@@ -73,8 +73,7 @@ void run_thread_pool(size_t threads) {
 
 void test_thread_pool() {
     size_t n = std::thread::hardware_concurrency();
-    std::cout << n << " concurrent threads are supported.\n";
-    std::vector<size_t> pool_sizes{1, n/2, n};
+    std::vector<size_t> pool_sizes{1, n/2, n, n+3};
     std::unordered_map<size_t, int> ms_consumed_per_pool_size;
     for (auto pool_size : pool_sizes) {
         auto t1 = high_resolution_clock::now();
@@ -83,8 +82,10 @@ void test_thread_pool() {
         auto ms_int = duration_cast<milliseconds>(t2 - t1);
         ms_consumed_per_pool_size.emplace(pool_size, ms_int.count());
     }
-    for (auto it = ms_consumed_per_pool_size.begin(); it != ms_consumed_per_pool_size.end(); ++it) {
-        std::cout << "Took " << it->second << " ms to perform 30 100-ms tasks with " << it->first << " threads." << std::endl;
+    std::cout << "***********RESULTS************" << std::endl;
+    std::cout << n << " concurrent hardware threads are supported.\n";
+    for (auto & it : ms_consumed_per_pool_size) {
+        std::cout << "Took " << it.second << " ms to perform 30 (100 to 300)-ms tasks with " << it.first << " threads." << std::endl;
 
     }
 }

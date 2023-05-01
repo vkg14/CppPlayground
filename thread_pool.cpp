@@ -47,6 +47,10 @@ void ThreadPool::add_job(std::function<void()> fn) {
     m_worker_condition.notify_one();
 }
 
+/*
+ * wait() - should be called when no more tasks will be enqueued and main-thread wants all tasks processed by worker
+ * threads before thread pool is closed.
+ */
 void ThreadPool::wait() {
     std::unique_lock ul(m_q_mutex);
     m_tasks_finished.wait(ul, [&]() {return m_q.empty();});
@@ -56,7 +60,7 @@ ThreadPool::~ThreadPool() {
     m_alive = false;
     // You don't need lock to notify all worker threads.
     m_worker_condition.notify_all();
-    for (auto& active_thread : m_pool) {
-        active_thread.join();
+    for (auto& worker_thread : m_pool) {
+        worker_thread.join();
     }
 }
