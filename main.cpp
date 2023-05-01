@@ -65,7 +65,7 @@ void run_thread_pool(size_t threads) {
             std::this_thread::sleep_for(std::chrono::milliseconds(random_num));
             std::cout << "Job " << i << " completed in thread: " << std::this_thread::get_id() << std::endl;
         };
-        tp.add_job(fn);
+        tp.add_job(std::move(fn));
     }
     // Wait for all jobs to finish
     tp.wait();
@@ -73,7 +73,7 @@ void run_thread_pool(size_t threads) {
 
 void test_thread_pool() {
     size_t n = std::thread::hardware_concurrency();
-    std::vector<size_t> pool_sizes{1, n/2, n, n+3};
+    std::vector<size_t> pool_sizes{1, n/2, n-1, n, n+3};
     std::unordered_map<size_t, int> ms_consumed_per_pool_size;
     for (auto pool_size : pool_sizes) {
         auto t1 = high_resolution_clock::now();

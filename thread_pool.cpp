@@ -43,8 +43,8 @@ void ThreadPool::add_job(std::function<void()> fn) {
     if (m_alive) {
         std::unique_lock ul(m_q_mutex);
         m_q.push_back(std::move(fn));
+        m_worker_condition.notify_one();
     }
-    m_worker_condition.notify_one();
 }
 
 /*
