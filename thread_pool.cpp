@@ -18,9 +18,7 @@ ThreadPool::ThreadPool(size_t sz) : m_sz(sz)  {
 void ThreadPool::worker_runner() {
     while (m_alive) {
         std::unique_lock ul(m_q_mutex);
-        while (m_alive && m_q.empty()) {
-            m_worker_condition.wait(ul);
-        }
+        m_worker_condition.wait(ul, [&]() { return !m_alive || !m_q.empty(); });
         if (!m_alive) {
             // Stop doing work - lock auto released by unique lock.
             break;
