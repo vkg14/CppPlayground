@@ -22,12 +22,14 @@ public:
     void wait();
 private:
     size_t m_sz;
+    std::vector<std::thread> m_pool;
+    // Mutex guards the queue with two separate conditions that lock acquisition may be waited on.
     std::mutex m_q_mutex;
     std::condition_variable m_worker_condition;
     std::condition_variable m_tasks_finished;
-    std::vector<std::thread> m_pool;
     std::deque<std::function<void()>> m_q;
     std::atomic<bool> m_alive {true};
+    std::atomic_size_t m_job_count {0};
 
     void worker_runner();
 

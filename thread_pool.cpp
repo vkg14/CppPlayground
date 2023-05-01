@@ -25,14 +25,13 @@ void ThreadPool::worker_runner() {
         }
         auto fn = std::move(m_q.front());
         m_q.pop_front();
-        if (m_q.empty()) {
-            // Let waiter know that all tasks are finished or in-flight.
-            // All in-flight tasks will be finished since destructor joins all worker threads.
-            m_tasks_finished.notify_one();
-        }
         // Relinquish lock after popping off queue
         ul.unlock();
         fn();
+        if (--m_job_count == 0) {
+            // Let waiter know that all tasks are finished.
+            m_tasks_finished.notify_one();
+        }
     }
     std::cout << "Thread " << std::this_thread::get_id() << " shutting down." << std::endl;
 }
@@ -41,6 +40,7 @@ void ThreadPool::add_job(std::function<void()> fn) {
     if (m_alive) {
         std::unique_lock ul(m_q_mutex);
         m_q.push_back(std::move(fn));
+        m_job_count++;
         m_worker_condition.notify_one();
     }
 }

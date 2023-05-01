@@ -55,10 +55,11 @@ void ctc_codility_perf() {
 }
 
 void run_thread_pool(size_t threads) {
-    ThreadPool tp{threads};
+    // Initialize random before thread pool to ensure destruction AFTER thread pool.
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(100, 300);
+    ThreadPool tp{threads};
     for (int i = 0; i < 30; i++) {
         auto fn = [i, &gen, &dis]() {
             int random_num = dis(gen);
@@ -73,7 +74,7 @@ void run_thread_pool(size_t threads) {
 
 void test_thread_pool() {
     size_t n = std::thread::hardware_concurrency();
-    std::vector<size_t> pool_sizes{1, n/2, n-1, n, n+3};
+    std::vector<size_t> pool_sizes{1, n/2, n-1, n, n+3, 2*n};
     std::unordered_map<size_t, int> ms_consumed_per_pool_size;
     for (auto pool_size : pool_sizes) {
         auto t1 = high_resolution_clock::now();
